@@ -3,6 +3,7 @@ import threading
 import time
 import random
 from contextlib import contextmanager
+import logging
 
 
 class Crawler:
@@ -19,20 +20,30 @@ class Crawler:
 
     def run(self):
         """ Start crawling... configured on init. """
-        while len(self.urls) >= 1:
-            response = self.make_request(self.urls.pop())
-            self.response_chunk.append(response)
-            with self.process_response_chunk():
-                self.wait_before_next_request()
+        error_count = 0
+        while len(self.urls) >= 1 and error_count < 10:
+            try:
+                response = self.make_request(self.urls.pop())
+                self.response_chunk.append(response)
+                with self.process_response_chunk():
+                    self.wait_before_next_request()
+                error_count = 0
+            except requests.exceptions.HTTPError or requests.exceptions.Timeout as e:
+                error_count += 1
+                logging.exception(e)
+        if error_count == 10:
+            raise ConnectionError
 
     def make_request(self, url):
         tries = 0
         while tries < 10:
             try:
-                return requests.get(url, headers=self.request_headers(), timeout=5)
+                response = requests.get(url, headers=self.request_headers(), timeout=5)
+                response.raise_for_status()
+                return response
             except requests.exceptions.Timeout:
                 tries += 1
-        raise TimeoutError
+        raise requests.exceptions.Timeout
 
     @contextmanager
     def process_response_chunk(self):
