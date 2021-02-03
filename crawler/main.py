@@ -12,11 +12,12 @@ class Crawler:
     Requests are randomized a little bit - to avoid being blocked (not sure if this even helps though).
     """
 
-    def __init__(self, urls, processor_func, response_chunk_size=32):
+    def __init__(self, urls, processor_func, response_chunk_size=32, cookies=None):
         self.urls = urls
         self.processor_func = processor_func
         self.response_chunk = []
         self.response_chunk_size = response_chunk_size
+        self.cookies = cookies if cookies else {}
 
     def run(self):
         """ Start crawling... configured on init. """
@@ -38,7 +39,7 @@ class Crawler:
         tries = 0
         while tries < 10:
             try:
-                response = requests.get(url, headers=self.request_headers(), timeout=5)
+                response = requests.get(url, headers=self.request_headers(), cookies=self.cookies, timeout=5)
                 response.raise_for_status()
                 return response
             except requests.exceptions.Timeout:
