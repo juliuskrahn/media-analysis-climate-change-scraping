@@ -7,9 +7,14 @@ CREATE TABLE article (
 	url VARCHAR PRIMARY KEY,
 	publisher VARCHAR,
 	title VARCHAR,
-	author VARCHAR,
 	published TIMESTAMP WITH TIME ZONE,
-	category VARCHAR,
+	category VARCHAR,  -- publisher specific
 	content VARCHAR,
-	tags VARCHAR[]
+	tags VARCHAR[],  -- publisher specific
+)
+
+CREATE TABLE temp (
+    publisher VARCHAR,
+    key VARCHAR,
+    val VARCHAR
 )
