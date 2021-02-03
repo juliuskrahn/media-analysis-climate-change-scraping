@@ -118,7 +118,10 @@ def scrape_articles(resp):
             title = entry.find(class_="entrylist__title").string
 
             breadcrumbs = [el.string.strip() for el in entry.find_all(class_="breadcrumb-list__item")]
-            tags = [entry.find(class_="entrylist__overline").string, breadcrumbs[0]]
+            overline = entry.find(class_="entrylist__overline")
+            if overline:
+                overline = overline.string
+            tags = [overline, breadcrumbs[0]]
             category = None
             if len(breadcrumbs) > 1:
                 category = "; ".join(breadcrumbs[1:])
