@@ -62,7 +62,7 @@ def process_crawled_archive_response_chunk(publisher, write_to_db=False):
 
                 with db_connection_cursor() as cur:
                     execute_values(cur,
-                                   "INSERT INTO article (url, publisher, title, author, published, category, tags) "
+                                   "INSERT INTO article (url, publisher, title, published, category, tags) "
                                    "VALUES %s ON CONFLICT DO NOTHING",
                                    all_articles)
                     execute_values(cur,
