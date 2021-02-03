@@ -1,4 +1,4 @@
-.log
+.log*
 temp
 .venv
 __pycache__
