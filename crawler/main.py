@@ -12,9 +12,10 @@ class Crawler:
     Requests are randomized a little bit - to avoid being blocked (not sure if this even helps though).
     """
 
-    def __init__(self, urls, processor_func, response_chunk_size=32, cookies=None):
+    def __init__(self, urls, processor_func, pagination_func=None, response_chunk_size=32, cookies=None):
         self.urls = urls
         self.processor_func = processor_func
+        self.pagination_func = pagination_func
         self.response_chunk = []
         self.response_chunk_size = response_chunk_size
         self.cookies = cookies if cookies else {}
@@ -28,12 +29,21 @@ class Crawler:
                 self.response_chunk.append(response)
                 with self.process_response_chunk():
                     self.wait_before_next_request()
+                if self.pagination_func:
+                    try:
+                        next_url = self.pagination_func(response)
+                        if type(next_url) == str:
+                            self.urls.append(self.pagination_func(response))
+                    except:
+                        error_count += 1
+                        logging.exception("Error in pagination func")
+                        continue
                 error_count = 0
             except requests.exceptions.HTTPError or requests.exceptions.Timeout as e:
                 error_count += 1
                 logging.exception(e)
         if error_count == 10:
-            raise ConnectionError
+            raise ValueError("PANIC - 10 Errors occurred in crawler")
 
     def make_request(self, url):
         tries = 0
