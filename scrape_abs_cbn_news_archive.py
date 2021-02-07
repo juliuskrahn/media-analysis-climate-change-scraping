@@ -9,11 +9,9 @@ PUBLISHER = "ABSCBNNews"
 
 @unprocessed_archive_urls(PUBLISHER)
 def archive_urls():
-    date_start = datetime.datetime(2015, 1, 1)
-    date_end = datetime.datetime(2020, 12, 31)
-    for day in range((date_end - date_start).days + 1):
-        date = date_start + datetime.timedelta(days=day)
-        yield "https://news.abs-cbn.com/sitemaps/news/sitemap-articles-" + date.strftime("%Y-%m") + ".xml"
+    for year in range(2015, 2021):
+        for month in range(1, 13):
+            yield f"https://news.abs-cbn.com/sitemaps/news/sitemap-articles-{year}-{month:0>2}.xml"
 
 
 @process_crawled_archive_response_chunk(PUBLISHER, write_to_db=True)

@@ -28,8 +28,11 @@ def scrape_articles(resp):
         for el in soup.select(".archive__entries .card"):
             headline = el.find(class_="card__link yr-card-headline")
             url = headline.attrs.get("href")
-            title = headline.find(class_="card__headline__text").string.strip()
-            category = el.find(class_="card__label__text").string
+            title = headline.find(class_="card__headline__text").get_text().strip()
+            try:
+                category = el.find(class_="card__label__text").string
+            except AttributeError:
+                category = None
             yield url, PUBLISHER, title, published, category, None
 
     except:
