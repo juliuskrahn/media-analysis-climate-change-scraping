@@ -44,10 +44,10 @@ def scrape_articles(resp):
 
     soup = BeautifulSoup(resp.text, "lxml")
     category_regexp = re.compile(r"theguardian\.com/(.*)/[0-9]{4}")
-    try:
-        for el in soup.select(".u-faux-block-link__overlay.js-headline-text"):
+    for el in soup.select(".u-faux-block-link__overlay.js-headline-text"):
+        try:
             url = el.attrs.get("href")
             category = category_regexp.search(url).group(1)
             yield url, PUBLISHER, el.string, published, category, None
-    except:
-        logging.exception(f"Failed to parse archive page: {resp.url}")
+        except AttributeError:
+            continue
