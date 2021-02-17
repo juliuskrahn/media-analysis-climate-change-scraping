@@ -23,6 +23,7 @@ def archive_urls():
 
 @process_crawled_archive_response_chunk(PUBLISHER, write_to_db=True)
 def scrape_articles(resp):
+    resp.encoding = resp.apparent_encoding
     soup = BeautifulSoup(resp.text, "lxml")
     resp_url_re_result = re.search(r"emol_noticias_([0-9]{4})_([0-9]{2})", resp.url)
     archive_page_month_datetime = datetime.datetime(int(resp_url_re_result.group(1)),
@@ -46,6 +47,7 @@ def scrape_articles(resp):
 
 
 def pagination_handler(resp):
+    resp.encoding = resp.apparent_encoding
     soup = BeautifulSoup(resp.text, "lxml")
     nav_links = soup.select("#mainContent > a")
     if len(nav_links) == 2:
