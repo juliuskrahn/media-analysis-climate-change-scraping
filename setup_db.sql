@@ -11,6 +11,13 @@ CREATE TABLE article (
 	category VARCHAR,  -- publisher specific
 	content VARCHAR,
 	tags VARCHAR[],  -- publisher specific
+	about_c_c BOOL
+)
+
+CREATE TABLE article_sampled (
+        url VARCHAR PRIMARY KEY,
+        publisher VARCHAR,
+        about_c_c BOOL
 )
 
 CREATE TABLE temp (
